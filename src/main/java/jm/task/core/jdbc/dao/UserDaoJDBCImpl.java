@@ -17,7 +17,9 @@ public class UserDaoJDBCImpl implements UserDao {
         String sqlCommand = "CREATE TABLE IF NOT EXISTS usersTable(" +
                 "id BIGINT NOT NULL AUTO_INCREMENT, name varchar(20) NOT NULL, lastName varchar(20) NOT NULL, age TINYINT NOT NULL, PRIMARY KEY (id))";
         try (Statement statement = connection.createStatement()) {
+            connection.setAutoCommit(false);
             statement.executeUpdate(sqlCommand);
+            connection.commit();
         } catch (SQLException e) {
             System.err.println("Ошибка при создании таблицы");
         }
@@ -26,14 +28,16 @@ public class UserDaoJDBCImpl implements UserDao {
     public void dropUsersTable() {
         String sqlCommand = "DROP TABLE IF EXISTS usersTable";
         try (Statement statement = connection.createStatement()) {
+            connection.setAutoCommit(false);
             statement.executeUpdate(sqlCommand);
+            connection.commit();
         } catch (SQLException e) {
             System.err.println("Ошибка при удалении таблицы");
         }
     }
 
     public void saveUser(String name, String lastName, byte age) {
-        String sqlCommand = "INSERT INTO usersTable(name, lastname, age) VALUES (? , ?, ?)";
+        String sqlCommand = "INSERT INTO usersTable(name, lastname, age) VALUES (?, ?, ?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sqlCommand)) {
             preparedStatement.setString(1, name);
             preparedStatement.setString(2, lastName);

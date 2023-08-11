@@ -15,7 +15,7 @@ public class Main {
         userDao.saveUser("Name3", "LastName3", (byte) 31);
         userDao.saveUser("Name4", "LastName4", (byte) 38);
 
-        System.out.println(userDao.getAllUsers());
+        userDao.getAllUsers().forEach(System.out::println);
         userDao.cleanUsersTable();
         userDao.dropUsersTable();
 
