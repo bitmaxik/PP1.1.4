@@ -2,6 +2,7 @@ package jm.task.core.jdbc.dao;
 
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +22,14 @@ public class UserDaoJDBCImpl implements UserDao {
             statement.executeUpdate(sqlCommand);
             connection.commit();
         } catch (SQLException e) {
-            System.err.println("Ошибка при создании таблицы");
+            try {
+                connection.rollback();
+                System.err.println(e.getMessage());
+                System.err.println("Transaction rollback");
+            } catch (SQLException ex) {
+                System.err.println(ex.getMessage());
+                System.err.println("There was an error making a rollback");
+            }
         }
     }
 
@@ -32,7 +40,14 @@ public class UserDaoJDBCImpl implements UserDao {
             statement.executeUpdate(sqlCommand);
             connection.commit();
         } catch (SQLException e) {
-            System.err.println("Ошибка при удалении таблицы");
+            try {
+                connection.rollback();
+                System.err.println(e.getMessage());
+                System.err.println("Transaction rollback");
+            } catch (SQLException ex) {
+                System.err.println(ex.getMessage());
+                System.err.println("There was an error making a rollback");
+            }
         }
     }
 
@@ -83,9 +98,18 @@ public class UserDaoJDBCImpl implements UserDao {
     public void cleanUsersTable() {
         String sqlCommand = "TRUNCATE TABLE usersTable";
         try (Statement statement = connection.createStatement()) {
+            connection.setAutoCommit(false);
             statement.executeUpdate(sqlCommand);
+            connection.commit();
         } catch (SQLException e) {
-            System.err.println("Ошибка при очистке таблицы");
+            try {
+                connection.rollback();
+                System.err.println(e.getMessage());
+                System.err.println("Transaction rollback");
+            } catch (SQLException ex) {
+                System.err.println(ex.getMessage());
+                System.err.println("There was an error making a rollback");
+            }
         }
     }
 }
